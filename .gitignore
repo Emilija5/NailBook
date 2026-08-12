@@ -1,0 +1,27 @@
+# .NET build files
+bin/
+obj/
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Visual Studio and VS Code
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# macOS
+.DS_Store
+
+# Local SQLite database files
+*.db
+*.db-shm
+*.db-wal
+
+# Local settings and secrets
+appsettings.Local.json
+secrets.json
