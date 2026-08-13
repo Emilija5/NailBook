@@ -21,6 +21,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     var roleNames = new[] { RoleNames.Admin, RoleNames.Customer };
 
     foreach (var roleName in roleNames)
@@ -28,6 +29,18 @@ using (var scope = app.Services.CreateScope())
         if (!await roleManager.RoleExistsAsync(roleName))
         {
             await roleManager.CreateAsync(new IdentityRole(roleName));
+        }
+    }
+    var adminEmail = builder.Configuration["AdminUser:Email"];
+
+    if (!string.IsNullOrWhiteSpace(adminEmail))
+    {
+        var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+        if (adminUser is not null)
+        {
+            await userManager.AddToRoleAsync(adminUser, RoleNames.Admin);
+            await userManager.RemoveFromRoleAsync(adminUser, RoleNames.Customer);
         }
     }
 }
