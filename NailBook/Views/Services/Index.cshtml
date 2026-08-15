@@ -1,0 +1,35 @@
+@model IEnumerable<NailBook.Models.Service>
+
+@{
+    ViewData["Title"] = "Services";
+}
+
+<div class="text-center mb-5">
+    <h1>Our Services</h1>
+    <p class="lead">Choose the perfect service for your nails.</p>
+</div>
+
+@if (!Model.Any())
+{
+    <p class="text-center">No services are currently available.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var service in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h2 class="card-title h4">@service.Name</h2>
+                        <p class="card-text">@service.Description</p>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <strong>€@service.Price.ToString("0.00")</strong>
+                        <span class="text-muted">· @service.DurationMinutes minutes</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
