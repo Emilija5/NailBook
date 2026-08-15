@@ -22,6 +22,7 @@ else
             <th>Title</th>
             <th>Style</th>
             <th>Created</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -37,6 +38,11 @@ else
                 <td>@design.Title</td>
                 <td>@design.Style</td>
                 <td>@design.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</td>
+                <td>
+                    <a asp-action="Edit"
+                       asp-route-id="@design.Id"
+                       class="btn btn-sm btn-outline-primary">Edit</a>
+                </td>
             </tr>
         }
         </tbody>
