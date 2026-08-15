@@ -45,4 +45,42 @@ public class ServicesController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+    
+    [HttpGet]
+    public IActionResult Edit(int? id)
+    {
+        if (id is null)
+        {
+            return NotFound();
+        }
+
+        var service = _context.Services.Find(id);
+
+        if (service is null)
+        {
+            return NotFound();
+        }
+
+        return View(service);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Edit(int id, Service service)
+    {
+        if (id != service.Id)
+        {
+            return NotFound();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return View(service);
+        }
+
+        _context.Services.Update(service);
+        _context.SaveChanges();
+
+        return RedirectToAction(nameof(Index));
+    }
 }

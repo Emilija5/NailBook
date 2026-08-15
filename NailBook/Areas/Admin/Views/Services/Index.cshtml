@@ -24,6 +24,7 @@ else
             <th>Price</th>
             <th>Duration</th>
             <th>Active</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -35,6 +36,9 @@ else
                 <td>€@service.Price.ToString("0.00")</td>
                 <td>@service.DurationMinutes minutes</td>
                 <td>@(service.IsActive ? "Yes" : "No")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@service.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                </td>
             </tr>
         }
         </tbody>
