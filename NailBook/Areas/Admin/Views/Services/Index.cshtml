@@ -1,0 +1,38 @@
+@model IEnumerable<NailBook.Models.Service>
+
+@{
+    ViewData["Title"] = "Manage Services";
+}
+
+<h1>Manage Services</h1>
+
+@if (!Model.Any())
+{
+    <p>No services have been added yet.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Duration</th>
+            <th>Active</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var service in Model)
+        {
+            <tr>
+                <td>@service.Name</td>
+                <td>@service.Description</td>
+                <td>€@service.Price.ToString("0.00")</td>
+                <td>@service.DurationMinutes minutes</td>
+                <td>@(service.IsActive ? "Yes" : "No")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
