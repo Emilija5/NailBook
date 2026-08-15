@@ -47,12 +47,14 @@ public class AppointmentsController : Controller
             return Challenge();
         }
 
+        Service? selectedService = null;
+
         if (viewModel.ServiceId.HasValue)
         {
-            var serviceExists = _context.Services.Any(service =>
+            selectedService = _context.Services.FirstOrDefault(service =>
                 service.Id == viewModel.ServiceId.Value && service.IsActive);
 
-            if (!serviceExists)
+            if (selectedService is null)
             {
                 ModelState.AddModelError(nameof(viewModel.ServiceId),
                     "Please choose an active service.");
@@ -64,6 +66,30 @@ public class AppointmentsController : Controller
         {
             ModelState.AddModelError(nameof(viewModel.AppointmentDateTime),
                 "Please choose a future date and time.");
+        }
+        
+        if (selectedService is not null &&
+            viewModel.AppointmentDateTime.HasValue)
+        {
+            var requestedStart = viewModel.AppointmentDateTime.Value;
+            var requestedEnd = requestedStart.AddMinutes(
+                selectedService.DurationMinutes);
+
+            var confirmedAppointments = _context.Appointments
+                .Include(appointment => appointment.Service)
+                .Where(appointment => appointment.Status == AppointmentStatus.Confirmed)
+                .ToList();
+
+            var hasConflict = confirmedAppointments.Any(appointment =>
+                requestedStart < appointment.AppointmentDateTime.AddMinutes(
+                    appointment.Service.DurationMinutes) &&
+                requestedEnd > appointment.AppointmentDateTime);
+
+            if (hasConflict)
+            {
+                ModelState.AddModelError(nameof(viewModel.AppointmentDateTime),
+                    "This time overlaps with a confirmed appointment.");
+            }
         }
 
         if (!ModelState.IsValid)
