@@ -8,4 +8,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 {
     public DbSet<Service> Services { get; set; }
     public DbSet<NailDesign> NailDesigns { get; set; }
+    public DbSet<Appointment> Appointments { get; set; }
 }
