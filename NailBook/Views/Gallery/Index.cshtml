@@ -1,0 +1,40 @@
+@model IEnumerable<NailBook.Models.NailDesign>
+
+@{
+    ViewData["Title"] = "Gallery";
+}
+
+<h1 class="mb-4">Nail Design Gallery</h1>
+
+@if (!Model.Any())
+{
+    <p>No nail designs have been added yet.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var design in Model)
+        {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <img src="@design.ImageUrl"
+                         alt="@design.Title"
+                         class="card-img-top"
+                         style="height: 250px; object-fit: cover;" />
+
+                    <div class="card-body">
+                        <h5 class="card-title">@design.Title</h5>
+                        <p class="card-text">
+                            <strong>Style:</strong> @design.Style
+                        </p>
+
+                        @if (!string.IsNullOrWhiteSpace(design.Description))
+                        {
+                            <p class="card-text">@design.Description</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

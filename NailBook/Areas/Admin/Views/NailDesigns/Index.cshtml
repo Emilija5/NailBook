@@ -5,6 +5,9 @@
 }
 
 <h1>Manage Gallery</h1>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add Nail Design</a>
+</p>
 
 @if (!Model.Any())
 {
@@ -15,6 +18,7 @@ else
     <table class="table">
         <thead>
         <tr>
+            <th>Image</th>
             <th>Title</th>
             <th>Style</th>
             <th>Created</th>
@@ -24,6 +28,12 @@ else
         @foreach (var design in Model)
         {
             <tr>
+                <td>
+                    <img src="@design.ImageUrl"
+                         alt="@design.Title"
+                         class="img-thumbnail"
+                         style="width: 100px; height: 100px; object-fit: cover;" />
+                </td>
                 <td>@design.Title</td>
                 <td>@design.Style</td>
                 <td>@design.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</td>

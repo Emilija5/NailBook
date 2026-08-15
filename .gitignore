@@ -25,3 +25,4 @@ obj/
 # Local settings and secrets
 appsettings.Local.json
 secrets.json
+/NailBook/wwwroot/uploads/
