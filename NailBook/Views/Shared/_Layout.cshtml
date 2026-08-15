@@ -32,6 +32,16 @@
                            asp-controller="Gallery"
                            asp-action="Index">Gallery</a>
                     </li>
+                    @if (User.IsInRole(RoleNames.Customer))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark"
+                               asp-controller="Appointments"
+                               asp-action="MyAppointments">
+                                My Appointments
+                            </a>
+                        </li>
+                    }
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                     </li>

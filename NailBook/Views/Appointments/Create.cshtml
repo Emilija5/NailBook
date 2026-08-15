@@ -1,0 +1,55 @@
+@model NailBook.ViewModels.Appointments.CreateAppointmentViewModel
+
+@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Book Appointment";
+}
+
+<h1>Book Appointment</h1>
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="alert alert-success">
+        @successMessage
+    </div>
+}
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="ServiceId" class="form-label">Service</label>
+        <select asp-for="ServiceId"
+                asp-items="ViewBag.Services"
+                class="form-select">
+            <option value="">-- Choose a service --</option>
+        </select>
+        <span asp-validation-for="ServiceId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="AppointmentDateTime" class="form-label">
+            Preferred date and time
+        </label>
+        <input asp-for="AppointmentDateTime"
+               type="datetime-local"
+               class="form-control" />
+        <span asp-validation-for="AppointmentDateTime" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CustomerNote" class="form-label">
+            Note (optional)
+        </label>
+        <textarea asp-for="CustomerNote" class="form-control"></textarea>
+        <span asp-validation-for="CustomerNote" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Request Appointment</button>
+    <a asp-controller="Services" asp-action="Index" class="btn btn-secondary">
+        Cancel
+    </a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

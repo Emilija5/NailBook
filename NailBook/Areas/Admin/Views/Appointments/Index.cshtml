@@ -1,0 +1,63 @@
+@model IEnumerable<NailBook.Models.Appointment>
+
+@{
+    ViewData["Title"] = "Manage Appointments";
+}
+
+<h1>Appointment Requests</h1>
+
+@if (!Model.Any())
+{
+    <p>No appointment requests have been made yet.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Date and time</th>
+            <th>Customer</th>
+            <th>Service</th>
+            <th>Note</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var appointment in Model)
+        {
+            <tr>
+                <td>@appointment.AppointmentDateTime.ToString("dd MMM yyyy HH:mm")</td>
+                <td>@(appointment.Customer.FullName ?? appointment.Customer.Email)</td>
+                <td>@appointment.Service.Name</td>
+                <td>@appointment.CustomerNote</td>
+                <td>@appointment.Status</td>
+                <td>
+                    @if (appointment.Status == NailBook.Models.Enums.AppointmentStatus.Pending)
+                    {
+                        <form asp-action="Confirm"
+                              asp-route-id="@appointment.Id"
+                              method="post"
+                              class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-success">
+                                Confirm
+                            </button>
+                        </form>
+                    }
+                    @if (appointment.Status != NailBook.Models.Enums.AppointmentStatus.Cancelled)
+                    {
+                        <form asp-action="Cancel"
+                              asp-route-id="@appointment.Id"
+                              method="post"
+                              class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                Cancel
+                            </button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
