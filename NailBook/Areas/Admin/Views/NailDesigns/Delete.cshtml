@@ -1,0 +1,29 @@
+@model NailBook.Models.NailDesign
+
+@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Delete Nail Design";
+}
+
+<h1>Delete Nail Design</h1>
+
+<div class="alert alert-warning">
+    Are you sure you want to delete this nail design?
+</div>
+
+<div class="mb-3">
+    <img src="@Model.ImageUrl"
+         alt="@Model.Title"
+         class="img-thumbnail"
+         style="width: 200px; height: 200px; object-fit: cover;" />
+</div>
+
+<p><strong>Title:</strong> @Model.Title</p>
+<p><strong>Style:</strong> @Model.Style</p>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

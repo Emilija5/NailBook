@@ -190,4 +190,50 @@ public class NailDesignsController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+    
+    public IActionResult Delete(int? id)
+    {
+        if (id is null)
+        {
+            return NotFound();
+        }
+
+        var nailDesign = _context.NailDesigns.Find(id);
+
+        if (nailDesign is null)
+        {
+            return NotFound();
+        }
+
+        return View(nailDesign);
+    }
+    
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        var nailDesign = _context.NailDesigns.Find(id);
+
+        if (nailDesign is null)
+        {
+            return NotFound();
+        }
+
+        _context.NailDesigns.Remove(nailDesign);
+        await _context.SaveChangesAsync();
+
+        var fileName = Path.GetFileName(nailDesign.ImageUrl);
+        var imagePath = Path.Combine(
+            _webHostEnvironment.WebRootPath,
+            "uploads",
+            "nail-designs",
+            fileName);
+
+        if (System.IO.File.Exists(imagePath))
+        {
+            System.IO.File.Delete(imagePath);
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
 }
