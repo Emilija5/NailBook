@@ -24,4 +24,25 @@ public class ServicesController : Controller
 
         return View(services);
     }
+    
+    [HttpGet]
+    public IActionResult Create()
+    {
+        return View(new Service());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Create(Service service)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(service);
+        }
+
+        _context.Services.Add(service);
+        _context.SaveChanges();
+
+        return RedirectToAction(nameof(Index));
+    }
 }
