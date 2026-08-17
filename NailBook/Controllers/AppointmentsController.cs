@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using NailBook.Data;
 using NailBook.Models;
-using NailBook.ViewModels.Appointments;
-using Microsoft.AspNetCore.Identity;
 using NailBook.Models.Enums;
-using Microsoft.EntityFrameworkCore;
+using NailBook.ViewModels.Appointments;
 
 namespace NailBook.Controllers;
 
@@ -26,16 +26,11 @@ public class AppointmentsController : Controller
 
     public IActionResult Create()
     {
-        var services = _context.Services
-            .Where(service => service.IsActive)
-            .OrderBy(service => service.Name)
-            .ToList();
-
-        ViewBag.Services = new SelectList(services, "Id", "Name");
+        LoadBookingFormData();
 
         return View(new CreateAppointmentViewModel());
     }
-    
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateAppointmentViewModel viewModel)
@@ -61,49 +56,65 @@ public class AppointmentsController : Controller
             }
         }
 
-        if (viewModel.AppointmentDateTime.HasValue &&
-            viewModel.AppointmentDateTime.Value <= DateTime.Now)
+        DateTime? requestedStart = null;
+
+        if (viewModel.AppointmentDate.HasValue &&
+            viewModel.AppointmentTime.HasValue)
         {
-            ModelState.AddModelError(nameof(viewModel.AppointmentDateTime),
-                "Please choose a future date and time.");
+            requestedStart = viewModel.AppointmentDate.Value
+                .ToDateTime(viewModel.AppointmentTime.Value);
+
+            if (requestedStart.Value <= DateTime.Now)
+            {
+                ModelState.AddModelError(nameof(viewModel.AppointmentDate),
+                    "Please choose a future date and time.");
+            }
         }
-        
-        if (selectedService is not null &&
-            viewModel.AppointmentDateTime.HasValue)
+
+        if (selectedService is not null && requestedStart.HasValue)
         {
-            var requestedStart = viewModel.AppointmentDateTime.Value;
-            var requestedEnd = requestedStart.AddMinutes(
+            var requestedEnd = requestedStart.Value.AddMinutes(
                 selectedService.DurationMinutes);
 
-            var confirmedAppointments = _context.Appointments
-                .Include(appointment => appointment.Service)
-                .Where(appointment => appointment.Status == AppointmentStatus.Confirmed)
-                .ToList();
+            var requestedEndTime = TimeOnly.FromDateTime(requestedEnd);
 
-            var hasConflict = confirmedAppointments.Any(appointment =>
-                requestedStart < appointment.AppointmentDateTime.AddMinutes(
-                    appointment.Service.DurationMinutes) &&
-                requestedEnd > appointment.AppointmentDateTime);
-
-            if (hasConflict)
+            if (viewModel.AppointmentTime!.Value < SalonHours.OpeningTime ||
+                viewModel.AppointmentTime.Value >= SalonHours.ClosingTime)
             {
-                ModelState.AddModelError(nameof(viewModel.AppointmentDateTime),
-                    "This time overlaps with a confirmed appointment.");
+                ModelState.AddModelError(nameof(viewModel.AppointmentTime),
+                    "Appointments are available from 08:00 to 18:00.");
+            }
+            else if (requestedEndTime > SalonHours.ClosingTime)
+            {
+                ModelState.AddModelError(nameof(viewModel.AppointmentTime),
+                    "This service must finish by 18:00.");
+            }
+            else
+            {
+                var confirmedAppointments = _context.Appointments
+                    .Include(appointment => appointment.Service)
+                    .Where(appointment =>
+                        appointment.Status == AppointmentStatus.Confirmed)
+                    .ToList();
+
+                var hasConflict = confirmedAppointments.Any(appointment =>
+                    requestedStart.Value < appointment.AppointmentDateTime.AddMinutes(
+                        appointment.Service.DurationMinutes) &&
+                    requestedEnd > appointment.AppointmentDateTime);
+
+                if (hasConflict)
+                {
+                    ModelState.AddModelError(nameof(viewModel.AppointmentTime),
+                        "This time overlaps with a confirmed appointment.");
+                }
             }
         }
 
         if (!ModelState.IsValid)
         {
-            var services = _context.Services
-                .Where(service => service.IsActive)
-                .OrderBy(service => service.Name)
-                .ToList();
-
-            ViewBag.Services = new SelectList(
-                services,
-                "Id",
-                "Name",
-                viewModel.ServiceId);
+            LoadBookingFormData(
+                viewModel.ServiceId,
+                viewModel.AppointmentTime);
 
             return View(viewModel);
         }
@@ -112,18 +123,53 @@ public class AppointmentsController : Controller
         {
             CustomerId = customerId,
             ServiceId = viewModel.ServiceId!.Value,
-            AppointmentDateTime = viewModel.AppointmentDateTime!.Value,
+            AppointmentDateTime = requestedStart!.Value,
             CustomerNote = viewModel.CustomerNote,
             Status = AppointmentStatus.Pending
         };
 
         _context.Appointments.Add(appointment);
         await _context.SaveChangesAsync();
+
         TempData["SuccessMessage"] = "Your appointment request was sent.";
 
         return RedirectToAction(nameof(Create));
     }
-    
+
+    private void LoadBookingFormData(
+        int? selectedServiceId = null,
+        TimeOnly? selectedTime = null)
+    {
+        var services = _context.Services
+            .Where(service => service.IsActive)
+            .OrderBy(service => service.Name)
+            .ToList();
+
+        ViewBag.Services = new SelectList(
+            services,
+            "Id",
+            "Name",
+            selectedServiceId);
+
+        var appointmentTimes = new List<SelectListItem>();
+        var time = SalonHours.OpeningTime;
+
+        while (time < SalonHours.ClosingTime)
+        {
+            appointmentTimes.Add(new SelectListItem
+            {
+                Value = time.ToString("HH:mm"),
+                Text = time.ToString("HH:mm"),
+                Selected = selectedTime.HasValue &&
+                           time == selectedTime.Value
+            });
+
+            time = time.AddMinutes(30);
+        }
+
+        ViewBag.AppointmentTimes = appointmentTimes;
+    }
+
     public IActionResult MyAppointments()
     {
         var customerId = _userManager.GetUserId(User);

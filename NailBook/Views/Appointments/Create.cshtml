@@ -6,6 +6,7 @@
 }
 
 <h1>Book Appointment</h1>
+
 @if (TempData["SuccessMessage"] is string successMessage)
 {
     <div class="alert alert-success">
@@ -27,13 +28,29 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="AppointmentDateTime" class="form-label">
-            Preferred date and time
+        <label asp-for="AppointmentDate" class="form-label">
+            Preferred date
         </label>
-        <input asp-for="AppointmentDateTime"
-               type="datetime-local"
+        <input asp-for="AppointmentDate"
+               type="date"
+               min="@DateTime.Today.ToString("yyyy-MM-dd")"
                class="form-control" />
-        <span asp-validation-for="AppointmentDateTime" class="text-danger"></span>
+        <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="AppointmentTime" class="form-label">
+            Preferred time
+        </label>
+        <select asp-for="AppointmentTime"
+                asp-items="ViewBag.AppointmentTimes"
+                class="form-select">
+            <option value="">-- Choose a time --</option>
+        </select>
+        <span asp-validation-for="AppointmentTime" class="text-danger"></span>
+        <div class="form-text">
+            Appointments are available from 08:00 to 18:00.
+        </div>
     </div>
 
     <div class="mb-3">
