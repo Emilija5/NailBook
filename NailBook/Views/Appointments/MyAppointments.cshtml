@@ -5,6 +5,12 @@
 }
 
 <h1>My Appointments</h1>
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="alert alert-success">
+        @successMessage
+    </div>
+}
 
 <p>
     <a asp-action="Create" class="btn btn-primary">Request Appointment</a>
@@ -23,6 +29,7 @@ else
             <th>Service</th>
             <th>Note</th>
             <th>Status</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -33,6 +40,21 @@ else
                 <td>@appointment.Service.Name</td>
                 <td>@appointment.CustomerNote</td>
                 <td>@appointment.Status</td>
+                <td>
+                    @if (appointment.Status == NailBook.Models.Enums.AppointmentStatus.Pending)
+                    {
+                        <form asp-action="Cancel"
+                              asp-route-id="@appointment.Id"
+                              method="post"
+                              class="d-inline">
+                            <button type="submit"
+                                    class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('Cancel this appointment request?');">
+                                Cancel
+                            </button>
+                        </form>
+                    }
+                </td>
             </tr>
         }
         </tbody>

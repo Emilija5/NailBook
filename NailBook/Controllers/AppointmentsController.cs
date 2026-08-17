@@ -169,6 +169,37 @@ public class AppointmentsController : Controller
 
         ViewBag.AppointmentTimes = appointmentTimes;
     }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Cancel(int id)
+    {
+        var customerId = _userManager.GetUserId(User);
+
+        if (string.IsNullOrEmpty(customerId))
+        {
+            return Challenge();
+        }
+
+        var appointment = _context.Appointments.FirstOrDefault(appointment =>
+            appointment.Id == id &&
+            appointment.CustomerId == customerId);
+
+        if (appointment is null)
+        {
+            return NotFound();
+        }
+
+        if (appointment.Status == AppointmentStatus.Pending)
+        {
+            appointment.Status = AppointmentStatus.Cancelled;
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Your appointment request was cancelled.";
+        }
+
+        return RedirectToAction(nameof(MyAppointments));
+    }
 
     public IActionResult MyAppointments()
     {
