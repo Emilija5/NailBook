@@ -71,6 +71,9 @@
                                       asp-route-id="@appointment.Id"
                                       method="post"
                                       class="d-inline">
+                                    <input type="hidden"
+                                           name="status"
+                                           value="@Context.Request.Query["status"]" />
                                     <button type="submit" class="btn btn-sm btn-success">
                                         Confirm
                                     </button>
@@ -83,6 +86,9 @@
                                       asp-route-id="@appointment.Id"
                                       method="post"
                                       class="d-inline">
+                                    <input type="hidden"
+                                           name="status"
+                                           value="@Context.Request.Query["status"]" />
                                     <button type="submit"
                                             class="btn btn-sm btn-outline-danger">
                                         Cancel

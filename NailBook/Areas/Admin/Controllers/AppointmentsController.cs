@@ -69,7 +69,7 @@ public class AppointmentsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Confirm(int id)
+    public async Task<IActionResult> Confirm(int id, AppointmentStatus? status)
     {
         var appointment = _context.Appointments.Find(id);
 
@@ -84,12 +84,12 @@ public class AppointmentsController : Controller
             await _context.SaveChangesAsync();
         }
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(Index), new { status });
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Cancel(int id)
+    public async Task<IActionResult> Cancel(int id, AppointmentStatus? status)
     {
         var appointment = _context.Appointments.Find(id);
 
@@ -104,6 +104,6 @@ public class AppointmentsController : Controller
             await _context.SaveChangesAsync();
         }
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(Index), new { status });
     }
 }
