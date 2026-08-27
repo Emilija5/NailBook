@@ -5,7 +5,12 @@
 <div class="text-center">
     <h1>Admin Dashboard</h1>
     <p>Welcome, @User.Identity?.Name!</p>
-    
+    <div class="card mx-auto mb-3" style="max-width: 280px;">
+        <div class="card-body">
+            <h2 class="display-6">@ViewBag.PendingAppointmentsCount</h2>
+            <p class="mb-0">Pending appointments</p>
+        </div>
+    </div>
     <p>
         <a asp-area="Admin"
            asp-controller="Appointments"
