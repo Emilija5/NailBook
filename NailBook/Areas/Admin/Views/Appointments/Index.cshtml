@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Manage Appointments";
+    var selectedStatus = Context.Request.Query["status"].ToString();
+    var selectedDate = Context.Request.Query["date"].ToString();
 }
 
 <div class="admin-appointments-hero text-center mb-4">
@@ -14,6 +16,14 @@
                     class="form-select">
                 <option value="">All statuses</option>
             </select>
+        </div>
+
+        <div class="col-md-3 mt-2 mt-md-0">
+            <input type="date"
+                   name="date"
+                   value="@selectedDate"
+                   class="form-control"
+                   aria-label="Filter by date" />
         </div>
 
         <div class="col-md-auto mt-2 mt-md-0">
@@ -73,7 +83,10 @@
                                       class="d-inline">
                                     <input type="hidden"
                                            name="status"
-                                           value="@Context.Request.Query["status"]" />
+                                           value="@selectedStatus" />
+                                    <input type="hidden"
+                                           name="date"
+                                           value="@selectedDate" />
                                     <button type="submit" class="btn btn-sm btn-success">
                                         Confirm
                                     </button>
@@ -88,7 +101,10 @@
                                       class="d-inline">
                                     <input type="hidden"
                                            name="status"
-                                           value="@Context.Request.Query["status"]" />
+                                           value="@selectedStatus" />
+                                    <input type="hidden"
+                                           name="date"
+                                           value="@selectedDate" />
                                     <button type="submit"
                                             class="btn btn-sm btn-outline-danger">
                                         Cancel

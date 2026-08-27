@@ -19,7 +19,7 @@ public class AppointmentsController : Controller
         _context = context;
     }
 
-    public IActionResult Index(AppointmentStatus? status)
+    public IActionResult Index(AppointmentStatus? status, DateTime? date)
     {
         IQueryable<Appointment> appointments = _context.Appointments
             .Include(appointment => appointment.Customer)
@@ -29,6 +29,16 @@ public class AppointmentsController : Controller
         {
             appointments = appointments.Where(
                 appointment => appointment.Status == status.Value);
+        }
+
+        if (date.HasValue)
+        {
+            var startOfDay = date.Value.Date;
+            var nextDay = startOfDay.AddDays(1);
+
+            appointments = appointments.Where(appointment =>
+                appointment.AppointmentDateTime >= startOfDay &&
+                appointment.AppointmentDateTime < nextDay);
         }
 
         var pendingCount = _context.Appointments.Count(
@@ -69,7 +79,10 @@ public class AppointmentsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Confirm(int id, AppointmentStatus? status)
+    public async Task<IActionResult> Confirm(
+        int id,
+        AppointmentStatus? status,
+        DateTime? date)
     {
         var appointment = _context.Appointments.Find(id);
 
@@ -84,12 +97,15 @@ public class AppointmentsController : Controller
             await _context.SaveChangesAsync();
         }
 
-        return RedirectToAction(nameof(Index), new { status });
+        return RedirectToAction(nameof(Index), new { status, date });
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Cancel(int id, AppointmentStatus? status)
+    public async Task<IActionResult> Cancel(
+        int id,
+        AppointmentStatus? status,
+        DateTime? date)
     {
         var appointment = _context.Appointments.Find(id);
 
@@ -104,6 +120,6 @@ public class AppointmentsController : Controller
             await _context.SaveChangesAsync();
         }
 
-        return RedirectToAction(nameof(Index), new { status });
+        return RedirectToAction(nameof(Index), new { status, date });
     }
 }
