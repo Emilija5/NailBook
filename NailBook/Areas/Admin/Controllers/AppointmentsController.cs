@@ -31,9 +31,36 @@ public class AppointmentsController : Controller
                 appointment => appointment.Status == status.Value);
         }
 
-        ViewBag.Statuses = new SelectList(
-            Enum.GetValues<AppointmentStatus>(),
-            status);
+        var pendingCount = _context.Appointments.Count(
+            appointment => appointment.Status == AppointmentStatus.Pending);
+
+        var confirmedCount = _context.Appointments.Count(
+            appointment => appointment.Status == AppointmentStatus.Confirmed);
+
+        var cancelledCount = _context.Appointments.Count(
+            appointment => appointment.Status == AppointmentStatus.Cancelled);
+
+        ViewBag.Statuses = new List<SelectListItem>
+        {
+            new()
+            {
+                Value = AppointmentStatus.Pending.ToString(),
+                Text = $"Pending ({pendingCount})",
+                Selected = status == AppointmentStatus.Pending
+            },
+            new()
+            {
+                Value = AppointmentStatus.Confirmed.ToString(),
+                Text = $"Confirmed ({confirmedCount})",
+                Selected = status == AppointmentStatus.Confirmed
+            },
+            new()
+            {
+                Value = AppointmentStatus.Cancelled.ToString(),
+                Text = $"Cancelled ({cancelledCount})",
+                Selected = status == AppointmentStatus.Cancelled
+            }
+        };
 
         return View(appointments
             .OrderBy(appointment => appointment.AppointmentDateTime)
