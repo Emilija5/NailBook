@@ -7,6 +7,20 @@
 <div class="admin-appointments-hero text-center mb-4">
     <h1>Appointment Requests</h1>
     <p class="lead mb-0">Review, confirm, or cancel customer requests.</p>
+    <form method="get" class="row justify-content-center mt-3">
+        <div class="col-md-4">
+            <select name="status"
+                    asp-items="ViewBag.Statuses"
+                    class="form-select">
+                <option value="">All statuses</option>
+            </select>
+        </div>
+
+        <div class="col-md-auto mt-2 mt-md-0">
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+        </div>
+    </form>
 </div>
 
 <div class="admin-appointments-card">

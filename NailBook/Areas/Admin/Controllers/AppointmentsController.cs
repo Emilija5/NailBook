@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NailBook.Data;
 using NailBook.Models;
@@ -18,16 +19,27 @@ public class AppointmentsController : Controller
         _context = context;
     }
 
-    public IActionResult Index()
+    public IActionResult Index(AppointmentStatus? status)
     {
-        var appointments = _context.Appointments
+        IQueryable<Appointment> appointments = _context.Appointments
             .Include(appointment => appointment.Customer)
-            .Include(appointment => appointment.Service)
-            .OrderBy(appointment => appointment.AppointmentDateTime)
-            .ToList();
+            .Include(appointment => appointment.Service);
 
-        return View(appointments);
+        if (status.HasValue)
+        {
+            appointments = appointments.Where(
+                appointment => appointment.Status == status.Value);
+        }
+
+        ViewBag.Statuses = new SelectList(
+            Enum.GetValues<AppointmentStatus>(),
+            status);
+
+        return View(appointments
+            .OrderBy(appointment => appointment.AppointmentDateTime)
+            .ToList());
     }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Confirm(int id)
@@ -47,7 +59,7 @@ public class AppointmentsController : Controller
 
         return RedirectToAction(nameof(Index));
     }
-    
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Cancel(int id)
