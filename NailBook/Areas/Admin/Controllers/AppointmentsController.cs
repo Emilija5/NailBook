@@ -84,7 +84,9 @@ public class AppointmentsController : Controller
         AppointmentStatus? status,
         DateTime? date)
     {
-        var appointment = _context.Appointments.Find(id);
+        var appointment = await _context.Appointments
+            .Include(appointment => appointment.Service)
+            .SingleOrDefaultAsync(appointment => appointment.Id == id);
 
         if (appointment is null)
         {
@@ -93,6 +95,28 @@ public class AppointmentsController : Controller
 
         if (appointment.Status == AppointmentStatus.Pending)
         {
+            var appointmentEnd = appointment.AppointmentDateTime.AddMinutes(
+                appointment.Service.DurationMinutes);
+
+            var confirmedAppointments = await _context.Appointments
+                .Include(existingAppointment => existingAppointment.Service)
+                .Where(existingAppointment =>
+                    existingAppointment.Status == AppointmentStatus.Confirmed)
+                .ToListAsync();
+
+            var hasConflict = confirmedAppointments.Any(existingAppointment =>
+                appointment.AppointmentDateTime < existingAppointment.AppointmentDateTime
+                    .AddMinutes(existingAppointment.Service.DurationMinutes) &&
+                appointmentEnd > existingAppointment.AppointmentDateTime);
+
+            if (hasConflict)
+            {
+                TempData["ErrorMessage"] =
+                    "This appointment overlaps with a confirmed appointment.";
+
+                return RedirectToAction(nameof(Index), new { status, date });
+            }
+
             appointment.Status = AppointmentStatus.Confirmed;
             await _context.SaveChangesAsync();
         }
