@@ -4,50 +4,62 @@
     ViewData["Title"] = "Manage Gallery";
 }
 
-<h1>Manage Gallery</h1>
+<div class="admin-gallery-hero text-center mb-4">
+    <h1>Manage Gallery</h1>
+    <p class="lead mb-0">Add, edit, or remove nail design images.</p>
+</div>
+
 <p>
     <a asp-action="Create" class="btn btn-primary">Add Nail Design</a>
 </p>
 
-@if (!Model.Any())
-{
-    <p>No nail designs have been added yet.</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Image</th>
-            <th>Title</th>
-            <th>Style</th>
-            <th>Created</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var design in Model)
-        {
-            <tr>
-                <td>
-                    <img src="@design.ImageUrl"
-                         alt="@design.Title"
-                         class="img-thumbnail"
-                         style="width: 100px; height: 100px; object-fit: cover;" />
-                </td>
-                <td>@design.Title</td>
-                <td>@design.Style</td>
-                <td>@design.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</td>
-                <td>
-                    <a asp-action="Edit"
-                       asp-route-id="@design.Id"
-                       class="btn btn-sm btn-outline-primary">Edit</a>
-                    <a asp-action="Delete"
-                       asp-route-id="@design.Id"
-                       class="btn btn-sm btn-outline-danger">Delete</a>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-}
+<div class="admin-gallery-card">
+    @if (!Model.Any())
+    {
+        <p class="mb-0">No nail designs have been added yet.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Title</th>
+                    <th>Style</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var design in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="@design.ImageUrl"
+                                 alt="@design.Title"
+                                 class="img-thumbnail admin-gallery-image" />
+                        </td>
+                        <td>@design.Title</td>
+                        <td>@design.Style</td>
+                        <td>@design.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</td>
+                        <td>
+                            <a asp-action="Edit"
+                               asp-route-id="@design.Id"
+                               class="btn btn-sm btn-outline-primary">
+                                Edit
+                            </a>
+
+                            <a asp-action="Delete"
+                               asp-route-id="@design.Id"
+                               class="btn btn-sm btn-outline-danger">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

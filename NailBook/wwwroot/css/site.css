@@ -194,3 +194,25 @@ body {
   box-shadow: 0 0.5rem 1.5rem rgba(80, 40, 65, 0.12);
   padding: 1.5rem;
 }
+.admin-gallery-hero {
+  background: linear-gradient(135deg, #fff0f6, #f4efff);
+  border-radius: 1rem;
+  padding: 2rem 1rem;
+}
+
+.admin-gallery-hero h1 {
+  color: #8c3b66;
+}
+
+.admin-gallery-card {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(80, 40, 65, 0.12);
+  padding: 1.5rem;
+}
+
+.admin-gallery-image {
+  height: 100px;
+  object-fit: cover;
+  width: 100px;
+}
