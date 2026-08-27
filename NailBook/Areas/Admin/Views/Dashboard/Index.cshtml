@@ -15,14 +15,28 @@
         </div>
     </div>
 
-    <p>
+    <div class="d-flex justify-content-center gap-2 mb-4">
         <a asp-area="Admin"
            asp-controller="Appointments"
            asp-action="Index"
            class="btn btn-primary">
             Manage Appointments
         </a>
-    </p>
+
+        <a asp-area="Admin"
+           asp-controller="Services"
+           asp-action="Index"
+           class="btn btn-outline-primary">
+            Manage Services
+        </a>
+
+        <a asp-area="Admin"
+           asp-controller="NailDesigns"
+           asp-action="Index"
+           class="btn btn-outline-primary">
+            Manage Gallery
+        </a>
+    </div>
 </div>
 
 <h2 class="mt-4">Upcoming Appointments</h2>
