@@ -77,6 +77,22 @@
                                     </button>
                                 </form>
                             }
+                            else if (appointment.Status == NailBook.Models.Enums.AppointmentStatus.Completed)
+                            {
+                                if (appointment.Review is null)
+                                {
+                                    <a asp-controller="Reviews"
+                                       asp-action="Create"
+                                       asp-route-id="@appointment.Id"
+                                       class="btn btn-sm btn-primary">
+                                        Leave Review
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Reviewed</span>
+                                }
+                            }
                         </td>
                     </tr>
                 }

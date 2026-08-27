@@ -1,0 +1,40 @@
+@model IEnumerable<NailBook.Models.Review>
+
+@{
+    ViewData["Title"] = "Manage Reviews";
+}
+
+<h1>Customer Reviews</h1>
+
+@if (!Model.Any())
+{
+    <p>No reviews have been submitted yet.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Customer</th>
+                <th>Service</th>
+                <th>Rating</th>
+                <th>Comment</th>
+                <th>Submitted</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var review in Model)
+            {
+                <tr>
+                    <td>@(review.Customer.FullName ?? review.Customer.Email)</td>
+                    <td>@review.Appointment.Service.Name</td>
+                    <td>@review.Rating / 5</td>
+                    <td>@review.Comment</td>
+                    <td>@review.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

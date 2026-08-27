@@ -25,5 +25,7 @@ public class Appointment
 
     public AppointmentStatus Status { get; set; } = AppointmentStatus.Pending;
 
+    public Review? Review { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

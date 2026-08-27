@@ -220,6 +220,7 @@ public class AppointmentsController : Controller
 
         var appointments = _context.Appointments
             .Include(appointment => appointment.Service)
+            .Include(appointment => appointment.Review)
             .Where(appointment => appointment.CustomerId == customerId)
             .OrderByDescending(appointment => appointment.AppointmentDateTime)
             .ToList();
