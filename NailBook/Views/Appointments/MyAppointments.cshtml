@@ -39,7 +39,20 @@ else
                 <td>@appointment.AppointmentDateTime.ToString("dd MMM yyyy HH:mm")</td>
                 <td>@appointment.Service.Name</td>
                 <td>@appointment.CustomerNote</td>
-                <td>@appointment.Status</td>
+                <td>
+                    @if (appointment.Status == NailBook.Models.Enums.AppointmentStatus.Pending)
+                    {
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    }
+                    else if (appointment.Status == NailBook.Models.Enums.AppointmentStatus.Confirmed)
+                    {
+                        <span class="badge bg-success">Confirmed</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Cancelled</span>
+                    }
+                </td>
                 <td>
                     @if (appointment.Status == NailBook.Models.Enums.AppointmentStatus.Pending)
                     {
