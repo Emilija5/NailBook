@@ -70,6 +70,13 @@ public class AppointmentsController : Controller
                     "Please choose a future date and time.");
             }
         }
+        
+        if (viewModel.AppointmentDate.HasValue &&
+            viewModel.AppointmentDate.Value.DayOfWeek == DayOfWeek.Sunday)
+        {
+            ModelState.AddModelError(nameof(viewModel.AppointmentDate),
+                "The salon is closed on Sundays.");
+        }
 
         if (selectedService is not null && requestedStart.HasValue)
         {
