@@ -152,11 +152,12 @@ public class AppointmentsController : Controller
             .OrderBy(service => service.Name)
             .ToList();
 
-        ViewBag.Services = new SelectList(
-            services,
-            "Id",
-            "Name",
-            selectedServiceId);
+        ViewBag.Services = services.Select(service => new SelectListItem
+        {
+            Value = service.Id.ToString(),
+            Text = $"{service.Name} - €{service.Price:0.00} - {service.DurationMinutes} min",
+            Selected = selectedServiceId == service.Id
+        });
 
         var appointmentTimes = new List<SelectListItem>();
         var time = SalonHours.OpeningTime;
