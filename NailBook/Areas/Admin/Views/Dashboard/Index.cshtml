@@ -5,4 +5,13 @@
 <div class="text-center">
     <h1>Admin Dashboard</h1>
     <p>Welcome, @User.Identity?.Name!</p>
+    
+    <p>
+        <a asp-area="Admin"
+           asp-controller="Appointments"
+           asp-action="Index"
+           class="btn btn-primary">
+            Manage Appointments
+        </a>
+    </p>
 </div>
