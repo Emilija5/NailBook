@@ -119,6 +119,8 @@ public class AppointmentsController : Controller
 
             appointment.Status = AppointmentStatus.Confirmed;
             await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Appointment confirmed.";
         }
 
         return RedirectToAction(nameof(Index), new { status, date });
@@ -142,6 +144,8 @@ public class AppointmentsController : Controller
         {
             appointment.Status = AppointmentStatus.Cancelled;
             await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Appointment cancelled.";
         }
 
         return RedirectToAction(nameof(Index), new { status, date });

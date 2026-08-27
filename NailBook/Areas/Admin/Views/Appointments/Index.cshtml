@@ -33,6 +33,13 @@
     </form>
 </div>
 
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="alert alert-success" role="alert">
+        @successMessage
+    </div>
+}
+
 @if (TempData["ErrorMessage"] is string errorMessage)
 {
     <div class="alert alert-danger" role="alert">
