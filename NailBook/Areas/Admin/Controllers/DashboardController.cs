@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NailBook.Data;
 using NailBook.Models;
 using NailBook.Models.Enums;
+using NailBook.ViewModels.Admin;
 
 namespace NailBook.Areas.Admin.Controllers;
 
@@ -19,11 +21,22 @@ public class DashboardController : Controller
 
     public IActionResult Index()
     {
-        var pendingAppointmentsCount = _context.Appointments.Count(
-            appointment => appointment.Status == AppointmentStatus.Pending);
+        var dashboard = new AdminDashboardViewModel
+        {
+            PendingAppointmentsCount = _context.Appointments.Count(
+                appointment => appointment.Status == AppointmentStatus.Pending),
 
-        ViewBag.PendingAppointmentsCount = pendingAppointmentsCount;
+            UpcomingAppointments = _context.Appointments
+                .Include(appointment => appointment.Customer)
+                .Include(appointment => appointment.Service)
+                .Where(appointment =>
+                    appointment.Status != AppointmentStatus.Cancelled &&
+                    appointment.AppointmentDateTime >= DateTime.Now)
+                .OrderBy(appointment => appointment.AppointmentDateTime)
+                .Take(5)
+                .ToList()
+        };
 
-        return View();
+        return View(dashboard);
     }
 }

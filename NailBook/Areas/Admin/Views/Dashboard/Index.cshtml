@@ -1,3 +1,5 @@
+@model NailBook.ViewModels.Admin.AdminDashboardViewModel
+
 @{
     ViewData["Title"] = "Admin Dashboard";
 }
@@ -5,12 +7,14 @@
 <div class="text-center">
     <h1>Admin Dashboard</h1>
     <p>Welcome, @User.Identity?.Name!</p>
-    <div class="card mx-auto mb-3" style="max-width: 280px;">
+
+    <div class="card mx-auto mb-4" style="max-width: 280px;">
         <div class="card-body">
-            <h2 class="display-6">@ViewBag.PendingAppointmentsCount</h2>
+            <h2 class="display-6">@Model.PendingAppointmentsCount</h2>
             <p class="mb-0">Pending appointments</p>
         </div>
     </div>
+
     <p>
         <a asp-area="Admin"
            asp-controller="Appointments"
@@ -20,3 +24,34 @@
         </a>
     </p>
 </div>
+
+<h2 class="mt-4">Upcoming Appointments</h2>
+
+@if (!Model.UpcomingAppointments.Any())
+{
+    <p>No upcoming appointments.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Date and time</th>
+            <th>Customer</th>
+            <th>Service</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var appointment in Model.UpcomingAppointments)
+        {
+            <tr>
+                <td>@appointment.AppointmentDateTime.ToString("dd MMM yyyy HH:mm")</td>
+                <td>@(appointment.Customer.FullName ?? appointment.Customer.Email)</td>
+                <td>@appointment.Service.Name</td>
+                <td>@appointment.Status</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
