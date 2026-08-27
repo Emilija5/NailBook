@@ -4,73 +4,82 @@
     ViewData["Title"] = "Manage Appointments";
 }
 
-<h1>Appointment Requests</h1>
+<div class="admin-appointments-hero text-center mb-4">
+    <h1>Appointment Requests</h1>
+    <p class="lead mb-0">Review, confirm, or cancel customer requests.</p>
+</div>
 
-@if (!Model.Any())
-{
-    <p>No appointment requests have been made yet.</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Date and time</th>
-            <th>Customer</th>
-            <th>Service</th>
-            <th>Note</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var appointment in Model)
-        {
-            <tr>
-                <td>@appointment.AppointmentDateTime.ToString("dd MMM yyyy HH:mm")</td>
-                <td>@(appointment.Customer.FullName ?? appointment.Customer.Email)</td>
-                <td>@appointment.Service.Name</td>
-                <td>@appointment.CustomerNote</td>
-                <td>
-                    @if (appointment.Status == NailBook.Models.Enums.AppointmentStatus.Pending)
-                    {
-                        <span class="badge bg-warning text-dark">Pending</span>
-                    }
-                    else if (appointment.Status == NailBook.Models.Enums.AppointmentStatus.Confirmed)
-                    {
-                        <span class="badge bg-success">Confirmed</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-danger">Cancelled</span>
-                    }
-                </td>
-                <td>
-                    @if (appointment.Status == NailBook.Models.Enums.AppointmentStatus.Pending)
-                    {
-                        <form asp-action="Confirm"
-                              asp-route-id="@appointment.Id"
-                              method="post"
-                              class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-success">
-                                Confirm
-                            </button>
-                        </form>
-                    }
-                    @if (appointment.Status != NailBook.Models.Enums.AppointmentStatus.Cancelled)
-                    {
-                        <form asp-action="Cancel"
-                              asp-route-id="@appointment.Id"
-                              method="post"
-                              class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                Cancel
-                            </button>
-                        </form>
-                    }
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-}
+<div class="admin-appointments-card">
+    @if (!Model.Any())
+    {
+        <p class="mb-0">No appointment requests have been made yet.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                <tr>
+                    <th>Date and time</th>
+                    <th>Customer</th>
+                    <th>Service</th>
+                    <th>Note</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var appointment in Model)
+                {
+                    <tr>
+                        <td>@appointment.AppointmentDateTime.ToString("dd MMM yyyy HH:mm")</td>
+                        <td>@(appointment.Customer.FullName ?? appointment.Customer.Email)</td>
+                        <td>@appointment.Service.Name</td>
+                        <td>@appointment.CustomerNote</td>
+                        <td>
+                            @if (appointment.Status == NailBook.Models.Enums.AppointmentStatus.Pending)
+                            {
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                            else if (appointment.Status == NailBook.Models.Enums.AppointmentStatus.Confirmed)
+                            {
+                                <span class="badge bg-success">Confirmed</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Cancelled</span>
+                            }
+                        </td>
+                        <td>
+                            @if (appointment.Status == NailBook.Models.Enums.AppointmentStatus.Pending)
+                            {
+                                <form asp-action="Confirm"
+                                      asp-route-id="@appointment.Id"
+                                      method="post"
+                                      class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        Confirm
+                                    </button>
+                                </form>
+                            }
+
+                            @if (appointment.Status != NailBook.Models.Enums.AppointmentStatus.Cancelled)
+                            {
+                                <form asp-action="Cancel"
+                                      asp-route-id="@appointment.Id"
+                                      method="post"
+                                      class="d-inline">
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-danger">
+                                        Cancel
+                                    </button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
