@@ -25,6 +25,8 @@ public class DashboardController : Controller
         {
             PendingAppointmentsCount = _context.Appointments.Count(
                 appointment => appointment.Status == AppointmentStatus.Pending),
+            CompletedAppointmentsCount = _context.Appointments.Count(
+                appointment => appointment.Status == AppointmentStatus.Completed),
             ActiveServicesCount = _context.Services.Count(
                 service => service.IsActive),
             UpcomingAppointments = _context.Appointments
@@ -32,6 +34,7 @@ public class DashboardController : Controller
                 .Include(appointment => appointment.Service)
                 .Where(appointment =>
                     appointment.Status != AppointmentStatus.Cancelled &&
+                    appointment.Status != AppointmentStatus.Completed &&
                     appointment.AppointmentDateTime >= DateTime.Now)
                 .OrderBy(appointment => appointment.AppointmentDateTime)
                 .Take(5)

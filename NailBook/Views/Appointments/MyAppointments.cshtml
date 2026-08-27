@@ -54,9 +54,13 @@
                             {
                                 <span class="badge bg-success">Confirmed</span>
                             }
-                            else
+                            else if (appointment.Status == NailBook.Models.Enums.AppointmentStatus.Cancelled)
                             {
                                 <span class="badge bg-danger">Cancelled</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-primary">Completed</span>
                             }
                         </td>
                         <td>

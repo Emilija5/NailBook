@@ -22,6 +22,15 @@
     <div class="col-md-3 mb-3">
         <div class="card dashboard-stat-card h-100">
             <div class="card-body">
+                <h2 class="display-6">@Model.CompletedAppointmentsCount</h2>
+                <p class="mb-0">Completed appointments</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card dashboard-stat-card h-100">
+            <div class="card-body">
                 <h2 class="display-6">@Model.ActiveServicesCount</h2>
                 <p class="mb-0">Active services</p>
             </div>
@@ -87,9 +96,13 @@
                             {
                                 <span class="badge bg-success">Confirmed</span>
                             }
-                            else
+                            else if (appointment.Status == NailBook.Models.Enums.AppointmentStatus.Cancelled)
                             {
                                 <span class="badge bg-danger">Cancelled</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-primary">Completed</span>
                             }
                         </td>
                     </tr>

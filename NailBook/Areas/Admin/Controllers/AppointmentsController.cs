@@ -50,6 +50,9 @@ public class AppointmentsController : Controller
         var cancelledCount = _context.Appointments.Count(
             appointment => appointment.Status == AppointmentStatus.Cancelled);
 
+        var completedCount = _context.Appointments.Count(
+            appointment => appointment.Status == AppointmentStatus.Completed);
+
         ViewBag.Statuses = new List<SelectListItem>
         {
             new()
@@ -69,6 +72,12 @@ public class AppointmentsController : Controller
                 Value = AppointmentStatus.Cancelled.ToString(),
                 Text = $"Cancelled ({cancelledCount})",
                 Selected = status == AppointmentStatus.Cancelled
+            },
+            new()
+            {
+                Value = AppointmentStatus.Completed.ToString(),
+                Text = $"Completed ({completedCount})",
+                Selected = status == AppointmentStatus.Completed
             }
         };
 
@@ -140,12 +149,37 @@ public class AppointmentsController : Controller
             return NotFound();
         }
 
-        if (appointment.Status != AppointmentStatus.Cancelled)
+        if (appointment.Status is AppointmentStatus.Pending or AppointmentStatus.Confirmed)
         {
             appointment.Status = AppointmentStatus.Cancelled;
             await _context.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "Appointment cancelled.";
+        }
+
+        return RedirectToAction(nameof(Index), new { status, date });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Complete(
+        int id,
+        AppointmentStatus? status,
+        DateTime? date)
+    {
+        var appointment = await _context.Appointments.FindAsync(id);
+
+        if (appointment is null)
+        {
+            return NotFound();
+        }
+
+        if (appointment.Status == AppointmentStatus.Confirmed)
+        {
+            appointment.Status = AppointmentStatus.Completed;
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Appointment marked as completed.";
         }
 
         return RedirectToAction(nameof(Index), new { status, date });

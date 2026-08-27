@@ -83,9 +83,13 @@
                             {
                                 <span class="badge bg-success">Confirmed</span>
                             }
-                            else
+                            else if (appointment.Status == NailBook.Models.Enums.AppointmentStatus.Cancelled)
                             {
                                 <span class="badge bg-danger">Cancelled</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-primary">Completed</span>
                             }
                         </td>
                         <td>
@@ -107,7 +111,25 @@
                                 </form>
                             }
 
-                            @if (appointment.Status != NailBook.Models.Enums.AppointmentStatus.Cancelled)
+                            @if (appointment.Status == NailBook.Models.Enums.AppointmentStatus.Confirmed)
+                            {
+                                <form asp-action="Complete"
+                                      asp-route-id="@appointment.Id"
+                                      method="post"
+                                      class="d-inline">
+                                    <input type="hidden"
+                                           name="status"
+                                           value="@selectedStatus" />
+                                    <input type="hidden"
+                                           name="date"
+                                           value="@selectedDate" />
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        Complete
+                                    </button>
+                                </form>
+                            }
+
+                            @if (appointment.Status is NailBook.Models.Enums.AppointmentStatus.Pending or NailBook.Models.Enums.AppointmentStatus.Confirmed)
                             {
                                 <form asp-action="Cancel"
                                       asp-route-id="@appointment.Id"
