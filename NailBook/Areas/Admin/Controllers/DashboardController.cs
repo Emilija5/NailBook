@@ -25,7 +25,8 @@ public class DashboardController : Controller
         {
             PendingAppointmentsCount = _context.Appointments.Count(
                 appointment => appointment.Status == AppointmentStatus.Pending),
-
+            ActiveServicesCount = _context.Services.Count(
+                service => service.IsActive),
             UpcomingAppointments = _context.Appointments
                 .Include(appointment => appointment.Customer)
                 .Include(appointment => appointment.Service)
