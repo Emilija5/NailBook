@@ -4,7 +4,7 @@
     ViewData["Title"] = "Services";
 }
 
-<div class="text-center mb-5">
+<div class="services-hero text-center mb-5">
     <h1>Our Services</h1>
     <p class="lead">Choose the perfect service for your nails.</p>
 </div>
@@ -19,7 +19,7 @@ else
         @foreach (var service in Model)
         {
             <div class="col-md-4 mb-4">
-                <div class="card h-100">
+                <div class="card service-card h-100">
                     <div class="card-body">
                         <h2 class="card-title h4">@service.Name</h2>
                         <p class="card-text">@service.Description</p>
