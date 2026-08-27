@@ -4,68 +4,84 @@
     ViewData["Title"] = "Manage Services";
 }
 
-<h1>Manage Services</h1>
+<div class="admin-services-hero text-center mb-4">
+    <h1>Manage Services</h1>
+    <p class="lead mb-0">Add, edit, activate, or deactivate salon services.</p>
+</div>
 
 <p>
     <a asp-action="Create" class="btn btn-primary">Add Service</a>
 </p>
 
-@if (!Model.Any())
-{
-    <p>No services have been added yet.</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Duration</th>
-            <th>Active</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var service in Model)
-        {
-            <tr>
-                <td>@service.Name</td>
-                <td>@service.Description</td>
-                <td>€@service.Price.ToString("0.00")</td>
-                <td>@service.DurationMinutes minutes</td>
-                <td>@(service.IsActive ? "Yes" : "No")</td>
-                <td>
-                    <a asp-action="Edit"
-                       asp-route-id="@service.Id"
-                       class="btn btn-sm btn-outline-primary">
-                        Edit
-                    </a>
+<div class="admin-services-card">
+    @if (!Model.Any())
+    {
+        <p class="mb-0">No services have been added yet.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Duration</th>
+                    <th>Active</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var service in Model)
+                {
+                    <tr>
+                        <td>@service.Name</td>
+                        <td>@service.Description</td>
+                        <td>€@service.Price.ToString("0.00")</td>
+                        <td>@service.DurationMinutes minutes</td>
+                        <td>
+                            @if (service.IsActive)
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inactive</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="Edit"
+                               asp-route-id="@service.Id"
+                               class="btn btn-sm btn-outline-primary">
+                                Edit
+                            </a>
 
-                    <form asp-action="ToggleActive"
-                          asp-route-id="@service.Id"
-                          method="post"
-                          class="d-inline">
-                        @if (service.IsActive)
-                        {
-                            <button type="submit"
-                                    class="btn btn-sm btn-outline-danger"
-                                    onclick="return confirm('Deactivate this service?');">
-                                Deactivate
-                            </button>
-                        }
-                        else
-                        {
-                            <button type="submit"
-                                    class="btn btn-sm btn-outline-success">
-                                Activate
-                            </button>
-                        }
-                    </form>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-}
+                            <form asp-action="ToggleActive"
+                                  asp-route-id="@service.Id"
+                                  method="post"
+                                  class="d-inline">
+                                @if (service.IsActive)
+                                {
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('Deactivate this service?');">
+                                        Deactivate
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-success">
+                                        Activate
+                                    </button>
+                                }
+                            </form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
