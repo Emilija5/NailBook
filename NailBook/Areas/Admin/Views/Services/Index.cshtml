@@ -37,7 +37,32 @@ else
                 <td>@service.DurationMinutes minutes</td>
                 <td>@(service.IsActive ? "Yes" : "No")</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@service.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <a asp-action="Edit"
+                       asp-route-id="@service.Id"
+                       class="btn btn-sm btn-outline-primary">
+                        Edit
+                    </a>
+
+                    <form asp-action="ToggleActive"
+                          asp-route-id="@service.Id"
+                          method="post"
+                          class="d-inline">
+                        @if (service.IsActive)
+                        {
+                            <button type="submit"
+                                    class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('Deactivate this service?');">
+                                Deactivate
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="submit"
+                                    class="btn btn-sm btn-outline-success">
+                                Activate
+                            </button>
+                        }
+                    </form>
                 </td>
             </tr>
         }

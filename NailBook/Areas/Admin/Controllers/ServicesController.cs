@@ -83,4 +83,20 @@ public class ServicesController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult ToggleActive(int id)
+    {
+        var service = _context.Services.Find(id);
+
+        if (service is null)
+        {
+            return NotFound();
+        }
+
+        service.IsActive = !service.IsActive;
+        _context.SaveChanges();
+
+        return RedirectToAction(nameof(Index));
+    }
 }
