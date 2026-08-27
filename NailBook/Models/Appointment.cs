@@ -27,5 +27,7 @@ public class Appointment
 
     public Review? Review { get; set; }
 
+    public InspirationImage? InspirationImage { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

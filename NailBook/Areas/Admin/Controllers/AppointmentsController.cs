@@ -23,7 +23,8 @@ public class AppointmentsController : Controller
     {
         IQueryable<Appointment> appointments = _context.Appointments
             .Include(appointment => appointment.Customer)
-            .Include(appointment => appointment.Service);
+            .Include(appointment => appointment.Service)
+            .Include(appointment => appointment.InspirationImage);
 
         if (status.HasValue)
         {

@@ -10,6 +10,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<NailDesign> NailDesigns { get; set; }
     public DbSet<Appointment> Appointments { get; set; }
     public DbSet<Review> Reviews { get; set; }
+    public DbSet<InspirationImage> InspirationImages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -24,5 +25,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasOne(review => review.Customer)
             .WithMany(customer => customer.Reviews)
             .HasForeignKey(review => review.CustomerId);
+
+        builder.Entity<InspirationImage>()
+            .HasOne(image => image.Appointment)
+            .WithOne(appointment => appointment.InspirationImage)
+            .HasForeignKey<InspirationImage>(image => image.AppointmentId);
     }
 }

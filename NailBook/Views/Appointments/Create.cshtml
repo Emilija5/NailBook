@@ -33,7 +33,7 @@
                     </ol>
                 </div>
 
-                <form asp-action="Create" method="post">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                     <div class="mb-3">
@@ -78,6 +78,20 @@
                         </label>
                         <textarea asp-for="CustomerNote" class="form-control"></textarea>
                         <span asp-validation-for="CustomerNote" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="InspirationImageFile" class="form-label">
+                            Inspiration image (optional)
+                        </label>
+                        <input asp-for="InspirationImageFile"
+                               type="file"
+                               accept=".jpg,.jpeg,.png,.webp"
+                               class="form-control" />
+                        <div class="form-text">
+                            JPG, PNG, or WEBP. Maximum size: 5 MB.
+                        </div>
+                        <span asp-validation-for="InspirationImageFile" class="text-danger"></span>
                     </div>
 
                     <button type="submit" class="btn btn-primary">

@@ -17,4 +17,6 @@ public class CreateAppointmentViewModel
 
     [StringLength(500)]
     public string? CustomerNote { get; set; }
+
+    public IFormFile? InspirationImageFile { get; set; }
 }

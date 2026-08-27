@@ -15,13 +15,16 @@ public class AppointmentsController : Controller
 {
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IWebHostEnvironment _webHostEnvironment;
 
     public AppointmentsController(
         ApplicationDbContext context,
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager,
+        IWebHostEnvironment webHostEnvironment)
     {
         _context = context;
         _userManager = userManager;
+        _webHostEnvironment = webHostEnvironment;
     }
 
     public IActionResult Create()
@@ -76,6 +79,30 @@ public class AppointmentsController : Controller
         {
             ModelState.AddModelError(nameof(viewModel.AppointmentDate),
                 "The salon is closed on Sundays.");
+        }
+
+        if (viewModel.InspirationImageFile is not null)
+        {
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+            var fileExtension = Path.GetExtension(viewModel.InspirationImageFile.FileName)
+                .ToLowerInvariant();
+
+            if (!allowedExtensions.Contains(fileExtension))
+            {
+                ModelState.AddModelError(nameof(viewModel.InspirationImageFile),
+                    "Please upload a JPG, PNG, or WEBP image.");
+            }
+
+            if (viewModel.InspirationImageFile.Length == 0)
+            {
+                ModelState.AddModelError(nameof(viewModel.InspirationImageFile),
+                    "Please choose an image file.");
+            }
+            else if (viewModel.InspirationImageFile.Length > 5 * 1024 * 1024)
+            {
+                ModelState.AddModelError(nameof(viewModel.InspirationImageFile),
+                    "The image must be smaller than 5 MB.");
+            }
         }
 
         if (selectedService is not null && requestedStart.HasValue)
@@ -137,6 +164,33 @@ public class AppointmentsController : Controller
 
         _context.Appointments.Add(appointment);
         await _context.SaveChangesAsync();
+
+        if (viewModel.InspirationImageFile is not null)
+        {
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(viewModel.InspirationImageFile.FileName)}";
+            var uploadsFolder = Path.Combine(
+                _webHostEnvironment.WebRootPath,
+                "uploads",
+                "inspiration-images");
+
+            Directory.CreateDirectory(uploadsFolder);
+
+            var filePath = Path.Combine(uploadsFolder, fileName);
+
+            await using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await viewModel.InspirationImageFile.CopyToAsync(fileStream);
+            }
+
+            var inspirationImage = new InspirationImage
+            {
+                AppointmentId = appointment.Id,
+                ImageUrl = $"/uploads/inspiration-images/{fileName}"
+            };
+
+            _context.InspirationImages.Add(inspirationImage);
+            await _context.SaveChangesAsync();
+        }
 
         TempData["SuccessMessage"] = "Your appointment request was sent.";
 
@@ -221,6 +275,7 @@ public class AppointmentsController : Controller
         var appointments = _context.Appointments
             .Include(appointment => appointment.Service)
             .Include(appointment => appointment.Review)
+            .Include(appointment => appointment.InspirationImage)
             .Where(appointment => appointment.CustomerId == customerId)
             .OrderByDescending(appointment => appointment.AppointmentDateTime)
             .ToList();

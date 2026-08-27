@@ -62,6 +62,7 @@
                     <th>Customer</th>
                     <th>Service</th>
                     <th>Note</th>
+                    <th>Inspiration</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -74,6 +75,20 @@
                         <td>@(appointment.Customer.FullName ?? appointment.Customer.Email)</td>
                         <td>@appointment.Service.Name</td>
                         <td>@appointment.CustomerNote</td>
+                        <td>
+                            @if (appointment.InspirationImage is not null)
+                            {
+                                <a href="@appointment.InspirationImage.ImageUrl"
+                                   target="_blank"
+                                   rel="noopener">
+                                    View image
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">None</span>
+                            }
+                        </td>
                         <td>
                             @if (appointment.Status == NailBook.Models.Enums.AppointmentStatus.Pending)
                             {
