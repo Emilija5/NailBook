@@ -69,3 +69,28 @@ body {
 .service-card:hover {
   transform: translateY(-4px);
 }
+.gallery-hero {
+  background: linear-gradient(135deg, #fff0f6, #f4efff);
+  border-radius: 1rem;
+  padding: 2rem 1rem;
+}
+
+.gallery-hero h1 {
+  color: #8c3b66;
+}
+
+.gallery-card {
+  border: 0;
+  box-shadow: 0 0.5rem 1.5rem rgba(80, 40, 65, 0.12);
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.gallery-card:hover {
+  transform: translateY(-4px);
+}
+
+.gallery-image {
+  height: 250px;
+  object-fit: cover;
+}

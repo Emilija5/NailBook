@@ -4,7 +4,10 @@
     ViewData["Title"] = "Gallery";
 }
 
-<h1 class="mb-4">Nail Design Gallery</h1>
+<div class="gallery-hero text-center mb-5">
+    <h1>Nail Design Gallery</h1>
+    <p class="lead mb-0">Explore our latest nail designs.</p>
+</div>
 
 @if (!Model.Any())
 {
@@ -16,11 +19,10 @@ else
         @foreach (var design in Model)
         {
             <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100">
+                <div class="card gallery-card h-100">
                     <img src="@design.ImageUrl"
                          alt="@design.Title"
-                         class="card-img-top"
-                         style="height: 250px; object-fit: cover;" />
+                         class="card-img-top gallery-image" />
 
                     <div class="card-body">
                         <h5 class="card-title">@design.Title</h5>
