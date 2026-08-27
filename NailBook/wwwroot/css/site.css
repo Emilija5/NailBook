@@ -29,3 +29,24 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+.home-hero {
+  background: linear-gradient(135deg, #fff0f6, #f4efff);
+  border-radius: 1rem;
+  margin-bottom: 2rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.home-hero h1 {
+  color: #8c3b66;
+}
+
+.home-card {
+  border: 0;
+  box-shadow: 0 0.5rem 1.5rem rgba(80, 40, 65, 0.12);
+}
+
+.home-faq .accordion-button:not(.collapsed) {
+  background-color: #fff0f6;
+  color: #8c3b66;
+}
