@@ -61,7 +61,8 @@ public class AppointmentsController : Controller
         var confirmedAppointments = await _context.Appointments
             .Include(appointment => appointment.Service)
             .Where(appointment =>
-                appointment.Status == AppointmentStatus.Confirmed &&
+                (appointment.Status == AppointmentStatus.Pending ||
+                 appointment.Status == AppointmentStatus.Confirmed) &&
                 appointment.AppointmentDateTime >= startOfDay &&
                 appointment.AppointmentDateTime < nextDay)
             .ToListAsync();
@@ -183,6 +184,7 @@ public class AppointmentsController : Controller
                 var confirmedAppointments = _context.Appointments
                     .Include(appointment => appointment.Service)
                     .Where(appointment =>
+                        appointment.Status == AppointmentStatus.Pending ||
                         appointment.Status == AppointmentStatus.Confirmed)
                     .ToList();
 
