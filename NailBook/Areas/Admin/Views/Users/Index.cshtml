@@ -1,0 +1,37 @@
+@model IEnumerable<NailBook.ViewModels.Admin.CustomerListItemViewModel>
+
+@{
+    ViewData["Title"] = "Customers";
+}
+
+<h1>Customers</h1>
+<p>View basic information about registered customers.</p>
+
+@if (!Model.Any())
+{
+    <p>No customers have registered yet.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Full name</th>
+                <th>Email</th>
+                <th>Appointments</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var customer in Model)
+            {
+                <tr>
+                    <td>@customer.FullName</td>
+                    <td>@customer.Email</td>
+                    <td>@customer.AppointmentCount</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
