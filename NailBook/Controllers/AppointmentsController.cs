@@ -196,7 +196,7 @@ public class AppointmentsController : Controller
                 if (hasConflict)
                 {
                     ModelState.AddModelError(nameof(viewModel.AppointmentTime),
-                        "This time overlaps with a confirmed appointment.");
+                        "This time overlaps with an existing appointment.");
                 }
             }
         }
