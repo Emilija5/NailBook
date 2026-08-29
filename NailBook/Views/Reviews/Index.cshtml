@@ -1,0 +1,36 @@
+@model IEnumerable<NailBook.Models.Review>
+
+@{
+    ViewData["Title"] = "Customer Reviews";
+}
+
+<div class="text-center mb-4">
+    <h1>Customer Reviews</h1>
+    <p class="lead mb-0">See what customers say about NailBook.</p>
+</div>
+
+@if (!Model.Any())
+{
+    <p class="text-center">No reviews have been shared yet.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var review in Model)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h2 class="h5">@(review.Customer.FullName ?? "Customer")</h2>
+                        <p class="mb-2"><strong>Rating:</strong> @review.Rating / 5</p>
+
+                        @if (!string.IsNullOrWhiteSpace(review.Comment))
+                        {
+                            <p class="mb-0">@review.Comment</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

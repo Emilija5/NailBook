@@ -6,6 +6,13 @@
 
 <h1>Customer Reviews</h1>
 
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="alert alert-success" role="alert">
+        @successMessage
+    </div>
+}
+
 @if (!Model.Any())
 {
     <p>No reviews have been submitted yet.</p>
@@ -20,7 +27,9 @@ else
                 <th>Service</th>
                 <th>Rating</th>
                 <th>Comment</th>
+                <th>Visibility</th>
                 <th>Submitted</th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -31,7 +40,26 @@ else
                     <td>@review.Appointment.Service.Name</td>
                     <td>@review.Rating / 5</td>
                     <td>@review.Comment</td>
+                    <td>
+                        @if (review.IsVisible)
+                        {
+                            <span class="badge bg-success">Visible</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Hidden</span>
+                        }
+                    </td>
                     <td>@review.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</td>
+                    <td>
+                        <form asp-action="ToggleVisibility"
+                              asp-route-id="@review.Id"
+                              method="post">
+                            <button type="submit" class="btn btn-sm btn-outline-primary">
+                                @(review.IsVisible ? "Hide" : "Show")
+                            </button>
+                        </form>
+                    </td>
                 </tr>
             }
             </tbody>

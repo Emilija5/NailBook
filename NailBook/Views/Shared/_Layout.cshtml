@@ -32,6 +32,12 @@
                            asp-controller="Gallery"
                            asp-action="Index">Gallery</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark"
+                           asp-area=""
+                           asp-controller="Reviews"
+                           asp-action="Index">Reviews</a>
+                    </li>
                     @if (User.IsInRole(RoleNames.Customer))
                     {
                         <li class="nav-item">
@@ -39,6 +45,13 @@
                                asp-controller="Appointments"
                                asp-action="MyAppointments">
                                 My Appointments
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark"
+                               asp-controller="Profile"
+                               asp-action="Index">
+                                My Profile
                             </a>
                         </li>
                     }

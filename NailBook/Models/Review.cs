@@ -22,5 +22,7 @@ public class Review
     [StringLength(1000)]
     public string? Comment { get; set; }
 
+    public bool IsVisible { get; set; } = true;
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

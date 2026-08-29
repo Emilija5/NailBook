@@ -9,7 +9,6 @@ using NailBook.ViewModels.Reviews;
 
 namespace NailBook.Controllers;
 
-[Authorize(Roles = RoleNames.Customer)]
 public class ReviewsController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -23,6 +22,18 @@ public class ReviewsController : Controller
         _userManager = userManager;
     }
 
+    public async Task<IActionResult> Index()
+    {
+        var reviews = await _context.Reviews
+            .Where(review => review.IsVisible)
+            .Include(review => review.Customer)
+            .OrderByDescending(review => review.CreatedAt)
+            .ToListAsync();
+
+        return View(reviews);
+    }
+
+    [Authorize(Roles = RoleNames.Customer)]
     public async Task<IActionResult> Create(int id)
     {
         var customerId = _userManager.GetUserId(User);
@@ -48,6 +59,7 @@ public class ReviewsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = RoleNames.Customer)]
     public async Task<IActionResult> Create(CreateReviewViewModel viewModel)
     {
         var customerId = _userManager.GetUserId(User);

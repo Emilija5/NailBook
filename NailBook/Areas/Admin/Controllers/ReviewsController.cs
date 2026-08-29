@@ -28,4 +28,25 @@ public class ReviewsController : Controller
 
         return View(reviews);
     }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ToggleVisibility(int id)
+    {
+        var review = await _context.Reviews.FindAsync(id);
+
+        if (review is null)
+        {
+            return NotFound();
+        }
+
+        review.IsVisible = !review.IsVisible;
+        await _context.SaveChangesAsync();
+
+        TempData["SuccessMessage"] = review.IsVisible
+            ? "Review is visible on the public page."
+            : "Review is hidden from the public page.";
+
+        return RedirectToAction(nameof(Index));
+    }
 }
