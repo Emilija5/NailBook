@@ -23,8 +23,11 @@ public class DashboardController : Controller
     {
         var dashboard = new AdminDashboardViewModel
         {
+            TotalAppointmentsCount = _context.Appointments.Count(),
             PendingAppointmentsCount = _context.Appointments.Count(
                 appointment => appointment.Status == AppointmentStatus.Pending),
+            ConfirmedAppointmentsCount = _context.Appointments.Count(
+                appointment => appointment.Status == AppointmentStatus.Confirmed),
             CompletedAppointmentsCount = _context.Appointments.Count(
                 appointment => appointment.Status == AppointmentStatus.Completed),
             ActiveServicesCount = _context.Services.Count(
