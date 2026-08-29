@@ -44,14 +44,14 @@ public class NailDesignsController : Controller
         }
         else
         {
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp", ".avif" };
             var fileExtension = Path.GetExtension(viewModel.ImageFile.FileName)
                 .ToLowerInvariant();
 
             if (!allowedExtensions.Contains(fileExtension))
             {
                 ModelState.AddModelError(nameof(viewModel.ImageFile),
-                    "Please upload a JPG, PNG, or WEBP image.");
+                    "Please upload a JPG, PNG, WEBP, or AVIF image.");
             }
 
             if (viewModel.ImageFile.Length > 5 * 1024 * 1024)
@@ -139,14 +139,14 @@ public class NailDesignsController : Controller
 
         if (viewModel.ImageFile is not null)
         {
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp", ".avif" };
             var fileExtension = Path.GetExtension(viewModel.ImageFile.FileName)
                 .ToLowerInvariant();
 
             if (!allowedExtensions.Contains(fileExtension))
             {
                 ModelState.AddModelError(nameof(viewModel.ImageFile),
-                    "Please upload a JPG, PNG, or WEBP image.");
+                    "Please upload a JPG, PNG, WEBP, or AVIF image.");
             }
 
             if (viewModel.ImageFile.Length > 5 * 1024 * 1024)
