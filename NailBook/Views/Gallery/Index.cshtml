@@ -7,6 +7,19 @@
 <div class="gallery-hero text-center mb-5">
     <h1>Nail Design Gallery</h1>
     <p class="lead mb-0">Explore our latest nail designs.</p>
+
+    <form method="get" class="row justify-content-center mt-3">
+        <div class="col-md-4">
+            <select name="style" asp-items="ViewBag.Styles" class="form-select">
+                <option value="">All styles</option>
+            </select>
+        </div>
+
+        <div class="col-md-auto mt-2 mt-md-0">
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+        </div>
+    </form>
 </div>
 
 @if (!Model.Any())
