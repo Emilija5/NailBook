@@ -90,6 +90,14 @@
                             }
                         </td>
                         <td>
+                            <a asp-action="Details"
+                               asp-route-id="@appointment.Id"
+                               asp-route-status="@selectedStatus"
+                               asp-route-date="@selectedDate"
+                               class="btn btn-sm btn-outline-primary">
+                                Details
+                            </a>
+
                             @if (appointment.Status == NailBook.Models.Enums.AppointmentStatus.Pending)
                             {
                                 <span class="badge bg-warning text-dark">Pending</span>

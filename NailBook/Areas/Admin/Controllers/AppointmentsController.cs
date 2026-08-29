@@ -87,6 +87,27 @@ public class AppointmentsController : Controller
             .ToList());
     }
 
+    public async Task<IActionResult> Details(int? id)
+    {
+        if (id is null)
+        {
+            return NotFound();
+        }
+
+        var appointment = await _context.Appointments
+            .Include(appointment => appointment.Customer)
+            .Include(appointment => appointment.Service)
+            .Include(appointment => appointment.InspirationImage)
+            .SingleOrDefaultAsync(appointment => appointment.Id == id);
+
+        if (appointment is null)
+        {
+            return NotFound();
+        }
+
+        return View(appointment);
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Confirm(
