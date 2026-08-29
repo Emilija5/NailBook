@@ -67,8 +67,8 @@
                             <option value="">-- Choose a time --</option>
                         </select>
                         <span asp-validation-for="AppointmentTime" class="text-danger"></span>
-                        <div class="form-text">
-                            Appointments are available from 08:00 to 18:00.
+                        <div id="availableTimesMessage" class="form-text">
+                            Choose a service and date to see available times.
                         </div>
                     </div>
 
@@ -111,4 +111,78 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const serviceSelect = document.getElementById("ServiceId");
+        const appointmentDateInput = document.getElementById("AppointmentDate");
+        const appointmentTimeSelect = document.getElementById("AppointmentTime");
+        const availableTimesMessage = document.getElementById("availableTimesMessage");
+        const availableTimesUrl = "@Url.Action("AvailableTimes", "Appointments")";
+
+        function addTimePlaceholder(text) {
+            appointmentTimeSelect.innerHTML = "";
+
+            const option = document.createElement("option");
+            option.value = "";
+            option.textContent = text;
+            appointmentTimeSelect.appendChild(option);
+        }
+
+        async function updateAvailableTimes(keepSelectedTime) {
+            const serviceId = serviceSelect.value;
+            const appointmentDate = appointmentDateInput.value;
+            const selectedTime = keepSelectedTime
+                ? appointmentTimeSelect.value
+                : "";
+
+            if (!serviceId || !appointmentDate) {
+                addTimePlaceholder("-- Choose a service and date first --");
+                appointmentTimeSelect.disabled = true;
+                availableTimesMessage.textContent =
+                    "Choose a service and date to see available times.";
+                return;
+            }
+
+            addTimePlaceholder("Loading available times...");
+            appointmentTimeSelect.disabled = true;
+
+            try {
+                const response = await fetch(
+                    `${availableTimesUrl}?serviceId=${encodeURIComponent(serviceId)}&appointmentDate=${encodeURIComponent(appointmentDate)}`);
+
+                if (!response.ok) {
+                    throw new Error("Could not load available times.");
+                }
+
+                const availableTimes = await response.json();
+                addTimePlaceholder("-- Choose a time --");
+
+                for (const time of availableTimes) {
+                    const option = document.createElement("option");
+                    option.value = time;
+                    option.textContent = time;
+                    appointmentTimeSelect.appendChild(option);
+                }
+
+                if (availableTimes.includes(selectedTime)) {
+                    appointmentTimeSelect.value = selectedTime;
+                }
+
+                appointmentTimeSelect.disabled = availableTimes.length === 0;
+                availableTimesMessage.textContent = availableTimes.length === 0
+                    ? "No times are available for this service and date."
+                    : "Only available times are shown.";
+            } catch {
+                addTimePlaceholder("-- Could not load times --");
+                appointmentTimeSelect.disabled = true;
+                availableTimesMessage.textContent =
+                    "Available times could not be loaded. Please try again.";
+            }
+        }
+
+        serviceSelect.addEventListener("change", () => updateAvailableTimes(false));
+        appointmentDateInput.addEventListener("change", () => updateAvailableTimes(false));
+
+        updateAvailableTimes(true);
+    </script>
 }

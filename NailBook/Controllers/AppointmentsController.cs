@@ -34,6 +34,62 @@ public class AppointmentsController : Controller
         return View(new CreateAppointmentViewModel());
     }
 
+    [HttpGet]
+    public async Task<IActionResult> AvailableTimes(
+        int? serviceId,
+        DateOnly? appointmentDate)
+    {
+        if (!serviceId.HasValue ||
+            !appointmentDate.HasValue ||
+            appointmentDate.Value < DateOnly.FromDateTime(DateTime.Today) ||
+            appointmentDate.Value.DayOfWeek == DayOfWeek.Sunday)
+        {
+            return Json(Array.Empty<string>());
+        }
+
+        var service = await _context.Services.SingleOrDefaultAsync(service =>
+            service.Id == serviceId.Value && service.IsActive);
+
+        if (service is null)
+        {
+            return Json(Array.Empty<string>());
+        }
+
+        var startOfDay = appointmentDate.Value.ToDateTime(TimeOnly.MinValue);
+        var nextDay = startOfDay.AddDays(1);
+
+        var confirmedAppointments = await _context.Appointments
+            .Include(appointment => appointment.Service)
+            .Where(appointment =>
+                appointment.Status == AppointmentStatus.Confirmed &&
+                appointment.AppointmentDateTime >= startOfDay &&
+                appointment.AppointmentDateTime < nextDay)
+            .ToListAsync();
+
+        var availableTimes = GetAppointmentTimes()
+            .Where(time =>
+            {
+                var requestedStart = appointmentDate.Value.ToDateTime(time);
+                var requestedEnd = requestedStart.AddMinutes(service.DurationMinutes);
+
+                if (requestedStart <= DateTime.Now ||
+                    requestedEnd > appointmentDate.Value.ToDateTime(
+                        SalonHours.ClosingTime))
+                {
+                    return false;
+                }
+
+                return !confirmedAppointments.Any(appointment =>
+                    requestedStart < appointment.AppointmentDateTime.AddMinutes(
+                        appointment.Service.DurationMinutes) &&
+                    requestedEnd > appointment.AppointmentDateTime);
+            })
+            .Select(time => time.ToString("HH:mm"))
+            .ToList();
+
+        return Json(availableTimes);
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateAppointmentViewModel viewModel)
@@ -110,15 +166,14 @@ public class AppointmentsController : Controller
             var requestedEnd = requestedStart.Value.AddMinutes(
                 selectedService.DurationMinutes);
 
-            var requestedEndTime = TimeOnly.FromDateTime(requestedEnd);
-
             if (viewModel.AppointmentTime!.Value < SalonHours.OpeningTime ||
                 viewModel.AppointmentTime.Value >= SalonHours.ClosingTime)
             {
                 ModelState.AddModelError(nameof(viewModel.AppointmentTime),
                     "Appointments are available from 08:00 to 18:00.");
             }
-            else if (requestedEndTime > SalonHours.ClosingTime)
+            else if (requestedEnd > requestedStart.Value.Date.Add(
+                         SalonHours.ClosingTime.ToTimeSpan()))
             {
                 ModelState.AddModelError(nameof(viewModel.AppointmentTime),
                     "This service must finish by 18:00.");
@@ -213,23 +268,28 @@ public class AppointmentsController : Controller
             Selected = selectedServiceId == service.Id
         });
 
-        var appointmentTimes = new List<SelectListItem>();
-        var time = SalonHours.OpeningTime;
-
-        while (time < SalonHours.ClosingTime)
-        {
-            appointmentTimes.Add(new SelectListItem
+        var appointmentTimes = GetAppointmentTimes()
+            .Select(time => new SelectListItem
             {
                 Value = time.ToString("HH:mm"),
                 Text = time.ToString("HH:mm"),
                 Selected = selectedTime.HasValue &&
                            time == selectedTime.Value
-            });
-
-            time = time.AddMinutes(30);
-        }
+            })
+            .ToList();
 
         ViewBag.AppointmentTimes = appointmentTimes;
+    }
+
+    private static IEnumerable<TimeOnly> GetAppointmentTimes()
+    {
+        var time = SalonHours.OpeningTime;
+
+        while (time < SalonHours.ClosingTime)
+        {
+            yield return time;
+            time = time.AddMinutes(30);
+        }
     }
     
     [HttpPost]
