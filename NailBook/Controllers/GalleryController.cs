@@ -36,4 +36,21 @@ public class GalleryController : Controller
             .OrderByDescending(design => design.CreatedAt)
             .ToList());
     }
+
+    public IActionResult Details(int? id)
+    {
+        if (id is null)
+        {
+            return NotFound();
+        }
+
+        var nailDesign = _context.NailDesigns.Find(id);
+
+        if (nailDesign is null)
+        {
+            return NotFound();
+        }
+
+        return View(nailDesign);
+    }
 }
